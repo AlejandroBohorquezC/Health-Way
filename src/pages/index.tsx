@@ -17,9 +17,9 @@ export default function Home() {
       </Head>
 
       
+      <NavBar />
       <ButtonsForm />
       <Form />
-      <NavBar />
     </>
   )
 }

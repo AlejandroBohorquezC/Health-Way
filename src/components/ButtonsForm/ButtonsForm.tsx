@@ -1,5 +1,6 @@
 import styled from "styled-components"
 import { IButtons } from "./ButtonsForm.interface";
+import Button from '@mui/material/Button';
 
 const Buttons = styled.div<IButtons>`
     display: flex;
@@ -12,8 +13,8 @@ const Buttons = styled.div<IButtons>`
 const ButtonsForm = () => {
   return (
     <Buttons>
-        <button>Iniciar Sesion</button>
-        <button>Registrarse</button>
+        <Button variant="text">Registrarse</Button>
+        <Button variant="text">Ingresar</Button>
     </Buttons>
   )
 }
