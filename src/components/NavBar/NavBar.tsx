@@ -5,7 +5,7 @@ const Header = styled.header<IHeader>`
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 150px;
+    height: 100px;
     margin: -8px;
 `;
 

@@ -6,3 +6,7 @@ export interface IFormStyle {
     margin?: string;
     height?: string;
 }
+
+export interface IForm {
+    isLogin: boolean
+}

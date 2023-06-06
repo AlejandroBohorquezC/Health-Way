@@ -1,7 +1,7 @@
 import { ChangeEvent, useState } from "react";
 
 
-export const useForm = (initialForm = {}) => {
+export const useForm = (initialForm = {email: '', password: '', verifyPassword: '', name: '', phone: '', birthDate: ''}) => {
 
     const [formState, setFormState] = useState(initialForm);
 

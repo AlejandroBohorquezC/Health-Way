@@ -1,11 +1,15 @@
 import { useState } from "react";
 import Link from "next/link";
 import styled from "styled-components"
-import { IFormStyle } from "./Form.interface";
-import {Button, OutlinedInput, InputLabel, InputAdornment, IconButton, FormControl}from '@mui/material';
+import { IForm, IFormStyle } from "./Form.interface";
+import {Button, OutlinedInput, InputLabel, InputAdornment, IconButton, FormControl, TextField}from '@mui/material';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import { useForm } from "@/hooks/useForm";
+import {createUserWithEmailAndPassword, signInWithEmailAndPassword} from 'firebase/auth'
+import { setDoc, doc } from 'firebase/firestore';
+import { auth, db } from "../../../config/firebaseAuth";
+import { useRouter } from "next/router";
 
 
 const FormStyle = styled.form<IFormStyle>`
@@ -13,18 +17,47 @@ const FormStyle = styled.form<IFormStyle>`
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
     margin: 8px -8px;
-    height: 200px;
+    height: auto;
 `;
 
-const Form = () => {
+const Form = ({isLogin}: IForm) => {
+
+    const router = useRouter();
 
     const [showPassword, setShowPassword] = useState(false);
-    const {onInputChange} = useForm();
-
-    const handleSubmit = (e: { preventDefault: () => void; }) => {
+    const [error, setError] = useState(false);
+    const {onInputChange, formState} = useForm();
+    
+    const handleSubmit = async (e: { preventDefault: () => void; }) => {
         e.preventDefault();
+
+        const {email, password, verifyPassword, name, birthDate, phone} = formState;
+        if (email === '') return setError(true);
+        try {
+            if (isLogin) {
+                const {user} = await signInWithEmailAndPassword(auth, email, password);
+                if(user.uid) {
+                    router.push('/recipes');
+                };
+                return;
+            };
+            
+            if (verifyPassword !== password) return alert('mal ahí');
+            const {user} = await createUserWithEmailAndPassword(auth, email, password);
+            if (user.uid) {
+                await setDoc(doc(db, 'users', user.uid), {
+                    name,
+                    birthDate,
+                    phone,
+                });
+                router.push('/recipes');
+            };
+            return;
+        } catch (error) {
+            console.error(error);
+        }
     };
 
     const handleClickShowPassword = () => setShowPassword((show) => !show);
@@ -36,17 +69,50 @@ const Form = () => {
     <FormStyle
         onSubmit={handleSubmit}
     >
-        <FormControl variant="outlined">
-            <InputLabel htmlFor="outlined-adornment-password">Correo</InputLabel>
-            <OutlinedInput
-                id="outlined-adornment-password"
+        {!isLogin && 
+        <>
+            <TextField
+                required
+                id="outlined-basic" 
+                label="Nombre" 
+                variant="outlined" 
                 type='text'
-                label="Correo"
-                name="correo"
-                onChange={onInputChange}
+                name="name"
+                onChange={onInputChange} 
             />
-        </FormControl>
-        <FormControl variant="outlined">
+            <TextField
+                id="outlined-basic" 
+                label="Celular" 
+                variant="outlined" 
+                type='number'
+                name="phone"
+                onChange={onInputChange} 
+            />
+            <TextField
+                required
+                sx={{ width: '26ch' }}
+                id="outlined-basic" 
+                label="Fecha de Nacimiento" 
+                variant="outlined" 
+                InputLabelProps={{
+                    shrink: true,
+                }}
+                type='date'
+                name="bithDate"
+                onChange={onInputChange} 
+            />
+        </>
+        }   
+        <TextField
+            required
+            id="outlined-basic"
+            label="Correo" 
+            variant="outlined" 
+            type='email'
+            name="email"
+            onChange={onInputChange} 
+        />
+        <FormControl sx={{ width: '26ch' }} variant="outlined">
             <InputLabel htmlFor="outlined-adornment-password">Password</InputLabel>
             <OutlinedInput
                 id="outlined-adornment-password"
@@ -68,9 +134,30 @@ const Form = () => {
                 onChange={onInputChange}
             />
         </FormControl>
-        <Link href={'/recipes'}>
-            <Button type="submit" variant="contained">Iniciar Sesión</Button>
-        </Link>
+        {!isLogin && 
+        <FormControl sx={{ width: '26ch' }} variant="outlined">
+            <InputLabel htmlFor="outlined-adornment-password">Verify Password</InputLabel>
+            <OutlinedInput
+                id="outlined-adornment-password"
+                type={showPassword ? 'text' : 'password'}
+                endAdornment={
+                <InputAdornment position="end">
+                    <IconButton
+                        aria-label="toggle password visibility"
+                        onClick={handleClickShowPassword}
+                        onMouseDown={handleMouseDownPassword}
+                        edge="end"
+                    >
+                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                </InputAdornment>
+                }
+                label="Verify Password"
+                name="verifyPassword"
+                onChange={onInputChange}
+            />
+        </FormControl>}
+        <Button type="submit" variant="contained">{!isLogin ? 'Registrarse' : 'Iniciar Sesión'}</Button>
     </FormStyle>
   )
 }

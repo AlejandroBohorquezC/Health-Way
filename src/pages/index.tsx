@@ -2,11 +2,12 @@ import ButtonsForm from '@/components/ButtonsForm/ButtonsForm';
 import Form  from '@/components/Form/Form';
 import NavBar from '@/components/NavBar/NavBar';
 import Head from 'next/head';
-import React from 'react';
+import React, { useState } from 'react';
 
 
 export default function Home() {
 
+  const [isLogin, setIsLogin] = useState(true);
   
   return (
     <>
@@ -18,8 +19,12 @@ export default function Home() {
 
       
       <NavBar />
-      <ButtonsForm />
-      <Form />
+      <ButtonsForm 
+        setIsLogin={setIsLogin}
+      />
+      <Form
+        isLogin={isLogin}
+      />
     </>
   )
 }

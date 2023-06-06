@@ -1,5 +1,5 @@
 import styled from "styled-components"
-import { IButtons } from "./ButtonsForm.interface";
+import { IButtons, IButtonsForm } from "./ButtonsForm.interface";
 import Button from '@mui/material/Button';
 
 const Buttons = styled.div<IButtons>`
@@ -10,11 +10,21 @@ const Buttons = styled.div<IButtons>`
     margin: 8px -8px;
 `;
 
-const ButtonsForm = () => {
+const ButtonsForm = ({setIsLogin}: IButtonsForm) => {
   return (
     <Buttons>
-        <Button variant="text">Registrarse</Button>
-        <Button variant="text">Ingresar</Button>
+        <Button 
+          variant="text"
+          onClick={() => setIsLogin(true)}
+        >
+          Inicio de Sesión
+        </Button>
+        <Button 
+          variant="text"
+          onClick={() => setIsLogin(false)}
+        >
+          Registrar
+        </Button>
     </Buttons>
   )
 }
