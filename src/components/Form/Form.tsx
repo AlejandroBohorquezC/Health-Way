@@ -1,15 +1,14 @@
 import { useState } from "react";
-import Link from "next/link";
 import styled from "styled-components"
 import { IForm, IFormStyle } from "./Form.interface";
 import {Button, OutlinedInput, InputLabel, InputAdornment, IconButton, FormControl, TextField}from '@mui/material';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import { useForm } from "@/hooks/useForm";
-import {createUserWithEmailAndPassword, signInWithEmailAndPassword} from 'firebase/auth'
-import { setDoc, doc } from 'firebase/firestore';
+import {createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile} from 'firebase/auth';
 import { auth, db } from "../../../config/firebaseAuth";
 import { useRouter } from "next/router";
+import { addDoc, collection } from "firebase/firestore";
 
 
 const FormStyle = styled.form<IFormStyle>`
@@ -27,37 +26,34 @@ const Form = ({isLogin}: IForm) => {
     const router = useRouter();
 
     const [showPassword, setShowPassword] = useState(false);
-    const [error, setError] = useState(false);
     const {onInputChange, formState} = useForm();
     
     const handleSubmit = async (e: { preventDefault: () => void; }) => {
         e.preventDefault();
 
         const {email, password, verifyPassword, name, birthDate, phone} = formState;
-        if (email === '') return setError(true);
         try {
             if (isLogin) {
                 const {user} = await signInWithEmailAndPassword(auth, email, password);
-                if(user.uid) {
-                    router.push('/recipes');
-                };
-                return;
+                if(user.uid) return router.push('/recipes');
             };
             
-            if (verifyPassword !== password) return alert('mal ahí');
+            if (password.length < 6) return alert('Contraseña mínimo de 6 carácteres');
+            if (verifyPassword !== password) return alert('Las contraseñas no coinciden');
             const {user} = await createUserWithEmailAndPassword(auth, email, password);
-            if (user.uid) {
-                await setDoc(doc(db, 'users', user.uid), {
-                    name,
-                    birthDate,
-                    phone,
-                });
-                router.push('/recipes');
-            };
-            return;
+            await updateProfile(user, {
+                displayName: name
+            });
+            await addDoc(collection(db, "users"), {
+                name,
+                phone,
+                birthDate: birthDate.toString(),
+                email
+            });
+            if(user.uid) return  router.push('/recipes');
         } catch (error) {
             console.error(error);
-        }
+        };
     };
 
     const handleClickShowPassword = () => setShowPassword((show) => !show);
@@ -98,7 +94,7 @@ const Form = ({isLogin}: IForm) => {
                     shrink: true,
                 }}
                 type='date'
-                name="bithDate"
+                name="birthDate"
                 onChange={onInputChange} 
             />
         </>
@@ -112,7 +108,7 @@ const Form = ({isLogin}: IForm) => {
             name="email"
             onChange={onInputChange} 
         />
-        <FormControl sx={{ width: '26ch' }} variant="outlined">
+        <FormControl required sx={{ width: '26ch' }} variant="outlined">
             <InputLabel htmlFor="outlined-adornment-password">Password</InputLabel>
             <OutlinedInput
                 id="outlined-adornment-password"
@@ -135,7 +131,7 @@ const Form = ({isLogin}: IForm) => {
             />
         </FormControl>
         {!isLogin && 
-        <FormControl sx={{ width: '26ch' }} variant="outlined">
+        <FormControl required sx={{ width: '26ch' }} variant="outlined">
             <InputLabel htmlFor="outlined-adornment-password">Verify Password</InputLabel>
             <OutlinedInput
                 id="outlined-adornment-password"

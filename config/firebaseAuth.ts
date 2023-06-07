@@ -3,12 +3,12 @@ import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
-    apiKey: "AIzaSyDiTosInmNp7bud4eiNdoVC0R395Wy_am4",
-    authDomain: "health-way-5ba4d.firebaseapp.com",
-    projectId: "health-way-5ba4d",
-    storageBucket: "health-way-5ba4d.appspot.com",
-    messagingSenderId: "523953028093",
-    appId: "1:523953028093:web:64d467f03985bcca1d3794"
+    apiKey: process.env.NEXT_PUBLIC_API_KEY,
+    authDomain: process.env.NEXT_PUBLIC_AUTH_DOMAIN,
+    projectId: process.env.NEXT_PUBLIC_PROJECT_ID,
+    storageBucket: process.env.NEXT_PUBLIC_STORAGE_BUCKET,
+    messagingSenderId: process.env.NEXT_PUBLIC_MESSAGING_SENDERID,
+    appId: process.env.NEXT_PUBLIC_APP_ID
 };
 
 const app = initializeApp(firebaseConfig, 'health-way');
