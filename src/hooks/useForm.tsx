@@ -1,7 +1,8 @@
 import { ChangeEvent, useState } from "react";
+import { IUseForm } from "./useForm.interface";
 
 
-export const useForm = (initialForm = {email: '', password: '', verifyPassword: '', name: '', phone: '', birthDate: ''}) => {
+export const useForm = (initialForm: IUseForm = {email: '', password: '', birthDate: ''}) => {
 
     const [formState, setFormState] = useState(initialForm);
 

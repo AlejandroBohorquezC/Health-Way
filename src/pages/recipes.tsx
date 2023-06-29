@@ -1,9 +1,15 @@
-import{ useEffect } from 'react'
+import{ useEffect, useState } from 'react'
 import { auth } from '../../config/firebaseAuth';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
+import NavBar from '@/components/NavBar/NavBar';
+import Seeker from '@/components/Seeker/Seeker';
+import RecipeList from '@/components/RecipeList/RecipeList';
+import { Hits } from '@/components/RecipeList/RecipeList.interface';
 
 const Recipes = () => {
+  
+  const [hits, setHits] = useState<Hits[]>();
 
   const router = useRouter();
   
@@ -15,12 +21,6 @@ const Recipes = () => {
     });
   }, [router]);
 
-  const handleSalir = (e: { preventDefault: () => void; }) => {
-    e.preventDefault();
-
-    auth.signOut()
-  };
-
   return (
     <>
       <Head>
@@ -29,8 +29,9 @@ const Recipes = () => {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
       
-      <h1>recipes</h1>
-      <button onClick={handleSalir}>salir</button>
+      <NavBar logout={true} />
+      <Seeker setHits={setHits} />
+      <RecipeList hits={hits} />
     </>
   )
 }

@@ -7,3 +7,7 @@ export interface IHeader {
     backgroundColor?: string;
     margin?: string;
 }
+
+export interface INavbar {
+    logout?: boolean;
+}

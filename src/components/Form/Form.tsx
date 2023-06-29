@@ -26,10 +26,7 @@ const Form = ({isLogin}: IForm) => {
     const router = useRouter();
 
     const [showPassword, setShowPassword] = useState(false);
-    const [error, setError] = useState({
-        isError: false,
-        message: ''
-    });
+    const [error, setError] = useState('');
     const {onInputChange, formState} = useForm();
     
     const handleSubmit = async (e: { preventDefault: () => void; }) => {
@@ -42,8 +39,8 @@ const Form = ({isLogin}: IForm) => {
                 if(user.uid) return router.push('/recipes');
             };
             
-            if (password.length < 6) return setError({ isError: true, message: 'Contraseña mínimo de 6 carácteres'});
-            if (verifyPassword !== password) return setError({ isError: true, message: 'Las contraseñas no coinciden'});
+            if (password.length < 6) return setError('Contraseña mínimo de 6 carácteres');
+            if (verifyPassword !== password) return setError('Las contraseñas no coinciden');
             const {user} = await createUserWithEmailAndPassword(auth, email, password);
             await updateProfile(user, {
                 displayName: name
@@ -158,9 +155,9 @@ const Form = ({isLogin}: IForm) => {
                 onChange={onInputChange}
             />
         </FormControl>}
-        {error.isError &&
+        {error &&
             <Alert variant="outlined" severity="error">
-                {error.message}
+                {error}
             </Alert>
         }
         <Button type="submit" variant="contained">{!isLogin ? 'Registrarse' : 'Iniciar Sesión'}</Button>
