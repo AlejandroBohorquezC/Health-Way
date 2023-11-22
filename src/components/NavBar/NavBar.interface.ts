@@ -10,4 +10,5 @@ export interface IHeader {
 
 export interface INavbar {
     logout?: boolean;
+    arrowBack?: boolean;
 }

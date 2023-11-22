@@ -8,11 +8,11 @@ import RecipeList from '@/components/RecipeList/RecipeList';
 import { Hits } from '@/components/RecipeList/RecipeList.interface';
 
 const Recipes = () => {
-  
+
   const [hits, setHits] = useState<Hits[]>();
 
   const router = useRouter();
-  
+
   useEffect(() => {
     auth.onAuthStateChanged((user) => {
       if (!user?.uid) {
@@ -33,7 +33,7 @@ const Recipes = () => {
       <Seeker setHits={setHits} />
       <RecipeList hits={hits} />
     </>
-  )
-}
+  );
+};
 
-export default Recipes
+export default Recipes;

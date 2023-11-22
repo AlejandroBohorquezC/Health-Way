@@ -54,7 +54,7 @@ const Seeker = ({setHits}: ISeeker) => {
                 name="recipe"
                 value={recipe}
                 onChange={onInputChange} 
-                />
+            />
             <Button type="submit" variant="contained">Buscar</Button>
         </SeekerStyle>
         {error &&

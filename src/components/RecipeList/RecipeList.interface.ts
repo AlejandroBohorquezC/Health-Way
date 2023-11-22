@@ -6,9 +6,14 @@ export interface Hits {
     recipe: Recipe
 }
 
-interface Recipe {
+export interface Recipe {
     label: string;
     image: string;
+    images: {
+        [key: string]: {
+        url: string;
+        };
+    };
     dietLabels: string[];
     healthLabels: string[];
     cautions: string[];

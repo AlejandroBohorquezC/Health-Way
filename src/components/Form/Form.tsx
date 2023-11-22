@@ -55,6 +55,7 @@ const Form = ({isLogin}: IForm) => {
             if(user.uid) return  router.push('/recipes');
         } catch (error) {
             console.error(error);
+            // console.log(error?.message)
         };
     };
 

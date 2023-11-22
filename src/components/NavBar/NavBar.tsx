@@ -3,6 +3,8 @@ import { IHeader, INavbar } from './NavBar.interface';
 import { auth } from '../../../config/firebaseAuth';
 import IconButton from '@mui/material/IconButton';
 import LogoutIcon from '@mui/icons-material/Logout';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import { useRouter } from 'next/router';
 
 const Header = styled.header<IHeader>`
     display: flex;
@@ -14,17 +16,26 @@ const Header = styled.header<IHeader>`
     background-color: #1976d2;
 `;
 
-const NavBar = ({logout}: INavbar) => {
+const NavBar = ({logout, arrowBack}: INavbar) => {
+
+  const router = useRouter();
 
   const handleLogout = (e: { preventDefault: () => void; }) => {
-    e.preventDefault();
-
     auth.signOut()
+  };
+
+  const handleArrowBack = () => {
+    router.push('/recipes');
   };
 
   return (
     <>
         <Header>
+            {arrowBack && 
+            <IconButton onClick={handleArrowBack} sx={{ color: 'white'}} aria-label="arrow back">
+              <ArrowBackIcon />
+            </IconButton>
+            }
             <h1>
                 Health Way
             </h1>
