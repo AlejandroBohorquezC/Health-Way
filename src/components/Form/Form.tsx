@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import styled from "styled-components"
 import { IForm, IFormStyle } from "./Form.interface";
 import {Button, OutlinedInput, InputLabel, InputAdornment, IconButton, FormControl, TextField, Alert}from '@mui/material';
@@ -27,12 +27,24 @@ const Form = ({isLogin}: IForm) => {
 
     const [showPassword, setShowPassword] = useState(false);
     const [error, setError] = useState('');
-    const {onInputChange, formState} = useForm();
+    const {onInputChange, onReset, formState} = useForm();
+    const {email, password, verifyPassword, name, birthDate, phone} = formState;
+    
+    useEffect(() => {
+        onReset();
+        setError('');
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [isLogin]);
+
+    useEffect(() => {
+        setTimeout(() => {
+            setError('')
+        }, 3000);
+    }, [error]);
     
     const handleSubmit = async (e: { preventDefault: () => void; }) => {
         e.preventDefault();
 
-        const {email, password, verifyPassword, name, birthDate, phone} = formState;
         try {
             if (isLogin) {
                 const {user} = await signInWithEmailAndPassword(auth, email, password);
@@ -54,8 +66,16 @@ const Form = ({isLogin}: IForm) => {
             });
             if(user.uid) return  router.push('/recipes');
         } catch (error) {
-            console.error(error);
-            // console.log(error?.message)
+            const err = error as Error;
+
+            const RegExp = /\(([^)]+)\)/;
+            const res = err.message.match(RegExp);
+
+            if (res) {
+                const errText = res[1];
+                const errClean = errText.replace(/-/g, " ");
+                setError(errClean);
+            } 
         };
     };
 
@@ -77,6 +97,7 @@ const Form = ({isLogin}: IForm) => {
                 variant="outlined" 
                 type='text'
                 name="name"
+                value={name}
                 onChange={onInputChange} 
             />
             <TextField
@@ -85,6 +106,7 @@ const Form = ({isLogin}: IForm) => {
                 variant="outlined" 
                 type='number'
                 name="phone"
+                value={phone}
                 onChange={onInputChange} 
             />
             <TextField
@@ -98,6 +120,7 @@ const Form = ({isLogin}: IForm) => {
                 }}
                 type='date'
                 name="birthDate"
+                value={birthDate}
                 onChange={onInputChange} 
             />
         </>
@@ -109,6 +132,7 @@ const Form = ({isLogin}: IForm) => {
             variant="outlined" 
             type='email'
             name="email"
+            value={email}
             onChange={onInputChange} 
         />
         <FormControl required sx={{ width: '26ch' }} variant="outlined">
@@ -130,6 +154,7 @@ const Form = ({isLogin}: IForm) => {
                 }
                 label="Password"
                 name="password"
+                value={password}
                 onChange={onInputChange}
             />
         </FormControl>
@@ -153,6 +178,7 @@ const Form = ({isLogin}: IForm) => {
                 }
                 label="Verify Password"
                 name="verifyPassword"
+                value={verifyPassword}
                 onChange={onInputChange}
             />
         </FormControl>}
