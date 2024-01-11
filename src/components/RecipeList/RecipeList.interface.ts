@@ -1,5 +1,5 @@
 export interface IRecipeList {
-    hits: Hits[] | undefined;
+    hits: Hits[];
 }
 
 export interface Hits {
