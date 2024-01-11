@@ -9,7 +9,7 @@ import { Hits } from '@/components/RecipeList/RecipeList.interface';
 
 const Recipes = () => {
 
-  const [hits, setHits] = useState<Hits[]>();
+  // const [hits, setHits] = useState<Hits[]>();
 
   const router = useRouter();
 
@@ -30,8 +30,8 @@ const Recipes = () => {
       </Head>
       
       <NavBar logout={true} />
-      <Seeker setHits={setHits} />
-      <RecipeList hits={hits} />
+      <Seeker />
+      <RecipeList />
     </>
   );
 };
