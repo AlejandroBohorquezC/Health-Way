@@ -4,8 +4,8 @@ import { useRouter } from 'next/router';
 import Link from 'next/link';
 import { Box, Typography, CircularProgress, Card, CardContent, CardMedia, Grid, Button, Alert } from '@mui/material'; // Added Alert
 import NavBar from '@/components/NavBar/NavBar';
-import { auth, db } from '@/config/firebaseAuth';
-import { collection, getDocs } from 'firebase/firestore'; // Removed unused query, where. Renamed firestoreQuery back if not used.
+import { auth, db } from '../../config/firebaseAuth'; // Corrected import path
+import { collection, getDocs } from 'firebase/firestore';
 import { Recipe } from '@/components/RecipeList/RecipeList.interface';
 
 const MyFavoritesPage = () => {
@@ -13,18 +13,18 @@ const MyFavoritesPage = () => {
     const [favoriteRecipes, setFavoriteRecipes] = useState<Recipe[]>([]);
     const [loadingFavorites, setLoadingFavorites] = useState(true);
     const [firestoreError, setFirestoreError] = useState<string | null>(null); // New state for Firestore errors
-    // const currentUser = auth.currentUser; // Not strictly needed here as effect uses user from onAuthStateChanged
+    // const currentUser = auth.currentUser; // This line was already commented out or removed, which is fine.
 
     useEffect(() => {
         const unsubscribe = auth.onAuthStateChanged(async (user) => { // Made async
             if (!user) {
                 router.push('/');
-                setLoadingFavorites(false); // Ensure loading is false if redirected
-                setFavoriteRecipes([]); // Clear recipes
+                setLoadingFavorites(false);
+                setFavoriteRecipes([]);
                 setFirestoreError(null);
             } else {
                 setLoadingFavorites(true);
-                setFirestoreError(null); // Clear previous error
+                setFirestoreError(null);
                 const favsCollectionRef = collection(db, "users", user.uid, "favorites");
                 try {
                     const querySnapshot = await getDocs(favsCollectionRef);
@@ -36,7 +36,7 @@ const MyFavoritesPage = () => {
                 } catch (error) {
                     console.error("Error fetching favorites:", error);
                     setFirestoreError("Could not load your favorite recipes. Please try again later.");
-                    setFavoriteRecipes([]); // Clear recipes on error
+                    setFavoriteRecipes([]);
                 } finally {
                     setLoadingFavorites(false);
                 }
@@ -59,7 +59,10 @@ const MyFavoritesPage = () => {
         );
     }
 
-    if (!currentUser && !loadingFavorites) { // Check again after loading, though redirect should handle
+    // The block below was removed:
+    // if (!currentUser && !loadingFavorites) { ... }
+
+    if (firestoreError) { // Added a dedicated block for firestoreError display when not loading
         return (
             <>
                 <Head>
@@ -67,14 +70,14 @@ const MyFavoritesPage = () => {
                 </Head>
                 <NavBar arrowBack={false} logout={true} />
                 <Box sx={{ textAlign: 'center', marginTop: 4, padding: 2 }}>
-                    <Typography variant="h6">Please log in to see your favorites.</Typography>
-                    <Button variant="contained" onClick={() => router.push('/')} sx={{marginTop: 2}}>Go to Login</Button>
+                    <Alert severity="error">{firestoreError}</Alert>
+                    {/* Optionally, add a button to retry or go home */}
                 </Box>
             </>
         );
     }
 
-    if (favoriteRecipes.length === 0) {
+    if (favoriteRecipes.length === 0) { // This will now correctly show if logged in, not loading, no error, but no favs
         return (
             <>
                 <Head>
