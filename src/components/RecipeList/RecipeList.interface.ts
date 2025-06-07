@@ -7,6 +7,7 @@ export interface Hits {
 }
 
 export interface Recipe {
+    uri: string;
     label: string;
     image: string;
     images: {
@@ -19,6 +20,8 @@ export interface Recipe {
     cautions: string[];
     ingredientLines: string[];
     calories: number;
+    cuisineType?: string[];
+    url?: string; // Source URL of the recipe
     totalNutrients: {
         [key: string]: {
         label: string;
